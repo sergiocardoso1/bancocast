@@ -1,0 +1,40 @@
+<div th:replace="shared/header"></div>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Transferir</h1>
+    <p class="mb-4">Selecione os usuários de origem e destino e insira o valor da transferência</p>
+
+    <div class="card shadow mb-4" style="padding: 30px;">
+        <form method="POST" th:action="@{/transferir}" onsubmit="return confirm('Confirma transferência?')">
+            <input type="hidden" name="adminId" th:value="${adminId}" />
+            
+            <div class="form-group">
+                <label for="usuarioOrigem">Usuário Origem</label>
+                <select class="form-control" id="usuarioOrigem" name="usuarioOrigemId" required>
+                    <option th:each="usuario : ${usuarios}" th:value="${usuario.id}" th:text="${usuario.nome}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="usuarioDestino">Usuário Destino</label>
+                <select class="form-control" id="usuarioDestino" name="usuarioDestinoId" required>
+                    <option th:each="usuario : ${usuarios}" th:value="${usuario.id}" th:text="${usuario.nome}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Valor a transferir</label>
+                <input type="number" step="0.01" class="form-control" id="valor" name="valor" placeholder="Digite o valor" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Transferir</button>
+        </form>
+    </div>
+
+</div>
+<!-- /.container-fluid -->
+
+<div th:replace="shared/footer"></div>

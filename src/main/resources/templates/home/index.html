@@ -1,0 +1,81 @@
+<div th:replace="shared/header"></div>
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+	<!-- Page Heading -->
+	<div class="d-flex flex-column align-items-start mb-4">
+		<h1 class="h3 mb-2 text-gray-800">Olá - <span th:text="${nome}"></span></h1>
+		<p class="mb-0">Preencha os dados para realizar uma transação!</p>
+	</div>
+
+	<div class="card shadow mb-4" style="padding: 30px;">
+		<form method="POST" th:action="@{/transacao/processar}" onsubmit="return confirmarTransacao()">
+
+			<input type="hidden" name="nomeUsuario" th:value="${nome}" />
+			<input type="hidden" name="usuarioId" th:value="${usuarioId}" />
+			<input type="hidden" name="tipoUsuario" th:value="${tipoUsuario}" />
+			<input type="hidden" name="adminId" th:value="${adminId}" />
+
+
+			<div class="form-group">
+				<div class="form-group" th:if="${tipoUsuario == '2'}">
+					<div id="saldo" th:text="'Saldo: R$ ' + ${#numbers.formatDecimal(saldo, 2, 'COMMA', 2, 'POINT')}"
+						class="form-control-plaintext"></div>
+				</div>
+				<label for="usuarioRecebedor">Selecionar Usuário Recebedor</label>
+				<select class="form-control" id="usuarioRecebedor" name="usuarioRecebedorId" required>
+					<option value="" disabled selected>Selecione um usuário recebedor</option>
+					<option th:each="usuario : ${usuarios}" th:value="${usuario.id}"
+						th:text="${usuario.nome + ' ' + (tipoUsuario == '1' ? ' - Saldo: R$ ' + #numbers.formatDecimal(usuario.saldo, 1, 'COMMA', 2, 'POINT') : '')}">
+					</option>
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label for="valor">Valor da Transação</label>
+				<input type="number" class="form-control" id="valor" name="valor" step="0.01" required>
+				<small id="valorHelp" class="form-text text-muted">O valor não pode ser 0 ou negativo.</small>
+			</div>
+
+			<div class="form-group">
+				<label for="tipoTransacao">Tipo de Transação</label>
+				<select class="form-control" id="tipoTransacao" name="tipoTransacao" required>
+					<option value="" disabled selected>Selecione o tipo de transação</option>
+					<option th:if="${tipoUsuario == '1'}" value="creditar">Creditar</option>
+					<option th:if="${tipoUsuario == '1'}" value="debitar">Debitar</option>
+
+					<option th:if="${tipoUsuario == '2'}" value="transferir">Transferir</option>
+				</select>
+			</div>
+
+			<div th:if="${erro != null}" th:text="${erro}" class="alert alert-danger" role="alert"></div>
+			<div th:if="${sucesso != null}" th:text="${sucesso}" class="alert alert-success" role="alert"></div>
+
+			<button type="submit" class="btn btn-primary">Realizar Transação</button>
+
+		</form>
+	</div>
+
+	<script>
+
+		function confirmarTransacao() {
+			var tipoTransacao = document.getElementById('tipoTransacao').value;
+			var usuarioRecebedorId = document.getElementById('usuarioRecebedor').value;
+			var valor = document.getElementById('valor').value;
+
+
+			if (parseFloat(valor) <= 0) {
+				alert("O valor da transação deve ser maior que 0.");
+				return false;
+			}
+
+			return true;
+		}
+
+	</script>
+
+</div>
+
+
+<div th:replace="shared/footer"></div>
